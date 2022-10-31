@@ -30,7 +30,7 @@ ourdata %>%
 ##This is to visualize the different locations on a map. 
 mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
-colfunc <- colorRampPalette(c("white", "black"))
+colfunc <- colorRampPalette(c("white", "red"))
 
 counts_shape <- table(ourdata$Shape)
 barplot_shapes <- barplot(counts_shape, main="Shape distribution",

@@ -12,8 +12,7 @@ library(viridis)
 library(RColorBrewer)
 
 
-
-ourdata <- read.xlsx("C:/Users/Emil/Desktop/UNI/DataVisualization/R_opgaver/Project/DataVis-2022/UFOs_coord-1.xlsx", 1)
+ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 #summary(ourdata)
 ourdata %>% 

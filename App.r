@@ -4,6 +4,7 @@
 ###############################
 #Source: https://data.world/aarranzlopez/ufo-sights-2016-us-and-canada
 
+install.packages("shiny")
 library(xlsx)
 library(tidyverse)
 library(sf)

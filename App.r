@@ -46,6 +46,7 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
 
 ui <- dashboardPage(
   dashboardHeader(title = "my Dashboard"),
+  dashboardHeader(title = "UFO Sightings"),
   dashboardSidebar(),
   dashboardBody(
     box(plotOutput("bar_plot"), width = 8),

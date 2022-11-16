@@ -1,0 +1,8 @@
+install.packages("shiny")
+install.packages("xlsx")
+install.packages("tidyverse")
+install.packages("sf")
+install.packages("mapview")
+install.packages("viridis")
+install.packages("RcolorBrewer")
+install.packages("shinydashboard")

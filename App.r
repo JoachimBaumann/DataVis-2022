@@ -4,23 +4,24 @@
 ###############################
 #Source: https://data.world/aarranzlopez/ufo-sights-2016-us-and-canada
 
-install.packages("shiny")
+
+library(shiny)
 library(xlsx)
 library(tidyverse)
 library(sf)
 library(mapview)
 library(viridis)
 library(RColorBrewer)
+library(shinydashboard)
 
 
 ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 #summary(ourdata)
-ourdata %>% 
-  glimpse()
+#ourdata %>% 
+#  glimpse()
 
 
-##Filter to get only state with California. 
 #ourdata <- ourdata  %>% 
 #  filter(State == "CA")
 
@@ -34,11 +35,30 @@ colfunc <- colorRampPalette(c("white", "red"))
 
 counts_shape <- table(ourdata$Shape)
 barplot_shapes <- barplot(counts_shape, main="Shape distribution",
-        xlab="Shapes observed", col=colfunc(30) , beside=False)
+                          xlab="Shapes observed", col=colfunc(30) , beside=False)
 
 
 counts_state <- table(ourdata$State)
 barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
+
+
+ui <- dashboardPage(
+  dashboardHeader(title = "my Dashboard"),
+  dashboardSidebar(),
+  dashboardBody(
+    box(plotOutput("bar_plot"), width = 8),
+    
+  )
+)
+
+server <-function(input, output){
+  output$bar_plot <- renderPlot({
+    barplot(counts_state, main="State distribution",
+            xlab="Observations in states", col=colfunc(60) , beside=False)
+  })
+}
+
+shinyApp(ui, server) 
 

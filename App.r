@@ -12,6 +12,7 @@ library(mapview)
 library(viridis)
 library(RColorBrewer)
 library(shinydashboard)
+library(leaflet)
 
 #Wordcloud packages
 

@@ -4,6 +4,8 @@
 ###############################
 #Source: https://data.world/aarranzlopez/ufo-sights-2016-us-and-canada
 
+
+
 library(shiny)
 library(xlsx)
 library(tidyverse)
@@ -13,6 +15,9 @@ library(viridis)
 library(RColorBrewer)
 library(shinydashboard)
 library(leaflet)
+library(tm)
+library(wordcloud)
+library(memoise)
 #Wordcloud packages
 
 
@@ -49,6 +54,29 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
 
+####Wordcloud
+
+text <- readLines("./words.txt")
+
+myCorpus = Corpus(VectorSource(text))
+myCorpus = tm_map(myCorpus, content_transformer(tolower))
+myCorpus = tm_map(myCorpus, removePunctuation)
+myCorpus = tm_map(myCorpus, removeNumbers)
+myCorpus = tm_map(myCorpus, removeWords,
+                  c(stopwords("SMART"), "thy", "thou", "thee", "the", "and", "but"))
+
+myDTM = TermDocumentMatrix(myCorpus,
+                           control = list(minWordLength = 1))
+
+m = as.matrix(myDTM)
+
+#sort(rowSums(m), decreasing = TRUE)
+
+wordcloud(sort(rowSums(m), decreasing = TRUE))
+###
+
+
+
 
 ui <- dashboardPage(
   dashboardHeader(title = "UFO Sightings"),
@@ -57,7 +85,9 @@ ui <- dashboardPage(
       menuItem("Bar-plots", tabName = "bar_plots"),
       menuItem("Map-plots", tabName = "map_plots"),
       menuItem("Interactive-plots", tabName = "interactive_plots"),
-      menuItem("Data", tabName = "data")
+      menuItem("Data", tabName = "data"), 
+      menuItem("WORDCLOUD", tabName = "wordcloud"),
+      menuItem("FAQ", tabName = "faq"), 
       
     )
   ),
@@ -79,6 +109,48 @@ ui <- dashboardPage(
         "data",
         h1("Data"),
         dataTableOutput("ufotable")
+      ), 
+      tabItem(
+        "wordcloud",
+        h1("Wordcloud"),
+        box()
+      ),
+      ), 
+      tabItem(
+        "faq",
+        h1("FAQ"),
+        p("Here is a list of a FAQ"), 
+        
+        h1("How often do people in the US and Canada see UFO’s?"),
+        p("answers"), 
+        
+        h1("How do we curate our chosen data, in a way that makes
+           it easier to understand while highlighting useful information?"), 
+        p("answer"), 
+        
+        h1("What are the most typical seen shapes of UFO’s, and how can it 
+        best be visualized? "),
+        p(""),
+        
+        h1("How do we VIsualize map coordinates in a datavisualization"), 
+        p(""), 
+        
+        h1("How many UFO’s spotted in a given state/area?"),
+        p(""),
+        
+        h1("Are there certain keywords which are more common in the sightings summary"),
+        p(""),
+        
+        h1("Are there any anomalies in the data set?"), 
+        p(""), 
+        
+        h1("Which state(s) are there observed the most sightings?"),
+        p(""),
+        
+        h1(""),
+        p(""),
+        
+        
         
       )
     )

@@ -13,7 +13,6 @@ library(viridis)
 library(RColorBrewer)
 library(shinydashboard)
 library(leaflet)
-
 #Wordcloud packages
 
 
@@ -52,12 +51,39 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
 
 
 ui <- dashboardPage(
-  dashboardHeader(title = "my Dashboard"),
   dashboardHeader(title = "UFO Sightings"),
-  dashboardSidebar(),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Bar-plots", tabName = "bar_plots"),
+      menuItem("Map-plots", tabName = "map_plots"),
+      menuItem("Interactive-plots", tabName = "interactive_plots"),
+      menuItem("Data", tabName = "data")
+      
+    )
+  ),
   dashboardBody(
-    box(plotOutput("bar_plot"), width = 8),
-    box(leafletOutput("map_view"), width = 8)
+    tabItems(
+      tabItem(
+        "bar_plots",
+        box(plotOutput("bar_plot"), width = 8)
+              ),
+      tabItem(
+        "map_plots",
+              box(leafletOutput("map_view"), width = 8)
+        ),
+      tabItem(
+        "interactive_plots",
+        h1("Interactive Plots")
+      ),
+      tabItem(
+        "data",
+        h1("Data"),
+        dataTableOutput("ufotable")
+        
+      )
+    )
+    #box(plotOutput("bar_plot"), width = 8),
+    #box(leafletOutput("map_view"), width = 8)
   )
 )
 
@@ -71,6 +97,8 @@ server <-function(input, output){
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
   })
+  
+  output$ufotable <- renderDataTable(ourdata)
 }
 
 

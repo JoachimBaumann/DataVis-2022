@@ -13,6 +13,8 @@ library(viridis)
 library(RColorBrewer)
 library(shinydashboard)
 library(leaflet)
+library(ggplot2)
+library(gganimate)
 #Wordcloud packages
 
 
@@ -33,7 +35,7 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 ##This is to visualize the different locations on a map. 
 
 
-
+theme_set(theme_bw())
 
 mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
@@ -48,16 +50,27 @@ counts_state <- table(ourdata$State)
 barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
+#sightings_frequency <- ggplot()
+p <- ggplot(
+  ourdata,
+  aes(Day, Temp, group = Month, color = factor(Month))
+) +
+  geom_line() +
+  scale_color_viridis_d() +
+  labs(x = "Day of Month", y = "Temperature") +
+  theme(legend.position = "top")
+
 
 
 ui <- dashboardPage(
   dashboardHeader(title = "UFO Sightings"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Bar-plots", tabName = "bar_plots"),
-      menuItem("Map-plots", tabName = "map_plots"),
-      menuItem("Interactive-plots", tabName = "interactive_plots"),
-      menuItem("Data", tabName = "data")
+      menuItem("Bar Plots", tabName = "bar_plots"),
+      menuItem("Map Plots", tabName = "map_plots"),
+      menuItem("Interactive Plots", tabName = "interactive_plots"),
+      menuItem("Data", tabName = "data"),
+      menuItem("Animated Plots", tabName = "animated_plots")
       
     )
   ),
@@ -80,6 +93,10 @@ ui <- dashboardPage(
         h1("Data"),
         dataTableOutput("ufotable")
         
+      ),
+      tabItem(
+        "animated_plots",
+        h1("Sighting Frequency")
       )
     )
     #box(plotOutput("bar_plot"), width = 8),

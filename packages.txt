@@ -6,3 +6,6 @@ install.packages("mapview")
 install.packages("viridis")
 install.packages("RcolorBrewer")
 install.packages("shinydashboard")
+install.packages("gganimate")
+install.packages("dplyr")
+install.packages("ggplot2"

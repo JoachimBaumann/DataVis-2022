@@ -18,6 +18,8 @@ library(leaflet)
 library(tm)
 library(wordcloud)
 library(memoise)
+library(ggplot2)
+library(gganimate)
 #Wordcloud packages
 
 
@@ -38,7 +40,7 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 ##This is to visualize the different locations on a map. 
 
 
-
+theme_set(theme_bw())
 
 mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
@@ -52,6 +54,16 @@ barplot_shapes <- barplot(counts_shape, main="Shape distribution",
 counts_state <- table(ourdata$State)
 barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
+
+#sightings_frequency <- ggplot()
+p <- ggplot(
+  ourdata,
+  aes(Day, Temp, group = Month, color = factor(Month))
+) +
+  geom_line() +
+  scale_color_viridis_d() +
+  labs(x = "Day of Month", y = "Temperature") +
+  theme(legend.position = "top")
 
 
 ####Wordcloud
@@ -88,6 +100,8 @@ ui <- dashboardPage(
       menuItem("Data", tabName = "data"), 
       menuItem("WORDCLOUD", tabName = "wordcloud"),
       menuItem("FAQ", tabName = "faq"), 
+      menuItem("Animated Plots", tabName = "animated_plots")
+
       
     )
   ),
@@ -152,6 +166,10 @@ ui <- dashboardPage(
         
         
         
+      ),
+      tabItem(
+        "animated_plots",
+        h1("Sighting Frequency")
       )
     )
     #box(plotOutput("bar_plot"), width = 8),

@@ -19,7 +19,7 @@ library(tm)
 library(wordcloud)
 library(memoise)
 library(ggplot2)
-library(gganimate)
+#library(gganimate)
 #Wordcloud packages
 
 
@@ -72,19 +72,21 @@ text <- readLines("./words.txt")
 
 myCorpus = Corpus(VectorSource(text))
 myCorpus = tm_map(myCorpus, content_transformer(tolower))
-myCorpus = tm_map(myCorpus, removePunctuation)
-myCorpus = tm_map(myCorpus, removeNumbers)
-myCorpus = tm_map(myCorpus, removeWords,
-                  c(stopwords("SMART"), "thy", "thou", "thee", "the", "and", "but"))
+#myCorpus = tm_map(myCorpus, removePunctuation)
+#myCorpus = tm_map(myCorpus, removeNumbers)
+#myCorpus = tm_map(myCorpus, removeWords,
+#                  c(stopwords("SMART"), "thy", "thou", "thee", "the", "and", "but"))
 
 myDTM = TermDocumentMatrix(myCorpus,
-                           control = list(minWordLength = 1))
+                          control = list(minWordLength = 1))
 
 m = as.matrix(myDTM)
 
+sort(rowSums(m), decreasing = TRUE)
+
 #sort(rowSums(m), decreasing = TRUE)
 
-wordcloud(sort(rowSums(m), decreasing = TRUE))
+wordcloud(text)
 ###
 
 
@@ -101,8 +103,6 @@ ui <- dashboardPage(
       menuItem("WORDCLOUD", tabName = "wordcloud"),
       menuItem("FAQ", tabName = "faq"), 
       menuItem("Animated Plots", tabName = "animated_plots")
-
-      
     )
   ),
   dashboardBody(
@@ -126,10 +126,9 @@ ui <- dashboardPage(
       ), 
       tabItem(
         "wordcloud",
-        h1("Wordcloud"),
-        box()
+        h1("Wordcloud")
+        #box()
       ),
-      ), 
       tabItem(
         "faq",
         h1("FAQ"),
@@ -162,7 +161,7 @@ ui <- dashboardPage(
         p(""),
         
         h1(""),
-        p(""),
+        p("")
         
         
         

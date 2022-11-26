@@ -27,13 +27,15 @@ library(ggplot2)
 ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 #load words for wordmap 
-text <- readLines("./words.txt")
+#text <- readLines("./words.txt")
 
 
 
 #summary(ourdata)
 #ourdata %>% 
 #  glimpse()
+
+#ourdata$Date...Time
 
 
 #ourdata <- ourdata  %>% 
@@ -77,8 +79,8 @@ getWordCloud <- memoise(function() {
   # Careful not to let just any name slip in here; a
   # malicious user could manipulate this value.
   
-  text <- readLines(sprintf("./%s.txt.gz", book),
-                    encoding="UTF-8")
+  text <- readLines("./words.txt")
+
   
   myCorpus = Corpus(VectorSource(text))
   myCorpus = tm_map(myCorpus, content_transformer(tolower))
@@ -94,27 +96,6 @@ getWordCloud <- memoise(function() {
   
    
 })
-
-
-
-###
-#text <- readLines("./words.txt")
-#
-#myCorpus = Corpus(VectorSource(text))
-#myCorpus = tm_map(myCorpus, content_transformer(tolower))
-
-#myDTM = TermDocumentMatrix(myCorpus,
-#                          control = list(minWordLength = 1))
-
-#m = as.matrix(myDTM)
-
-#sort(rowSums(m), decreasing = TRUE)
-
-#sort(rowSums(m), decreasing = TRUE)
-
-#wordcloud(text)
-###
-
 
 
 
@@ -149,11 +130,30 @@ ui <- dashboardPage(
         "data",
         h1("Data"),
         dataTableOutput("ufotable")
-      ), 
+      ),
       tabItem(
         "wordcloud",
         h1("Wordcloud"),
-        box(plotOutput("wordmap_plot"))
+        box(titlePanel("Word Cloud"),
+             
+             sidebarLayout(
+               # Sidebar with a slider and selection inputs
+               sidebarPanel(
+                 actionButton("update", "Change"),
+                 hr(),
+                 sliderInput("freq",
+                             "Minimum Frequency:",
+                             min = 1,  max = 500, value = 50),
+                 sliderInput("max",
+                             "Maximum Number of Words:",
+                             min = 1,  max = 1000,  value = 500)
+               ),
+               
+               # Show Word Cloud
+               mainPanel(
+                 plotOutput("plot_map")
+               )
+             ), width = 12, height = 12)
       ),
       tabItem(
         "faq",
@@ -189,8 +189,6 @@ ui <- dashboardPage(
         h1(""),
         p("")
         
-        
-        
       ),
       tabItem(
         "animated_plots",
@@ -213,21 +211,33 @@ server <-function(input, output, session){
     
   })
   
-  output$wordmap_plot <- renderPlot({
-    myCorpus = Corpus(VectorSource(text))
-    myCorpus = tm_map(myCorpus, content_transformer(tolower))
-    myCorpus = tm_map(myCorpus, removeWords,
-                      c(stopwords("SMART"), "thy", "thou", "thee", "the", "and", "but"))
+  output$date_range <- renderPrint({ 
     
-    myDTM = TermDocumentMatrix(myCorpus,
-                               control = list(minWordLength = 1))
+    #Sort by date here 
+    input$dates 
     
-    m = as.matrix(myDTM)
-    
-    sort(rowSums(m), decreasing = TRUE)
-    
-    
-    wordcloud(words=text, random.color = TRUE, colors = "RED")
+    })
+  
+  terms <- reactive({
+    # Change when the "update" button is pressed...
+    input$update
+    # ...but not for anything else
+    isolate({
+      withProgress({
+        setProgress(message = "Processing corpus...")
+        getWordCloud()
+      })
+    })
+  })
+  
+  # Make the wordcloud drawing predictable during a session
+  wordcloud_rep <- repeatable(wordcloud)
+  
+  output$plot_map <- renderPlot({
+    v <- terms()
+    wordcloud_rep(names(v), v, scale=c(4,0.5),
+                  min.freq = input$freq, max.words=input$max,
+                  colors=brewer.pal(8, "Dark2"))
   })
   
   

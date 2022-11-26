@@ -26,6 +26,11 @@ library(ggplot2)
 
 ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
+#load words for wordmap 
+text <- readLines("./words.txt")
+
+
+
 #summary(ourdata)
 #ourdata %>% 
 #  glimpse()
@@ -87,6 +92,7 @@ getWordCloud <- memoise(function() {
   
   sort(rowSums(m), decreasing = TRUE)
   
+   
 })
 
 
@@ -146,8 +152,8 @@ ui <- dashboardPage(
       ), 
       tabItem(
         "wordcloud",
-        h1("Wordcloud")
-        #box()
+        h1("Wordcloud"),
+        box(plotOutput("wordmap_plot"))
       ),
       tabItem(
         "faq",
@@ -197,7 +203,7 @@ ui <- dashboardPage(
 )
 
 
-server <-function(input, output){
+server <-function(input, output, session){
   output$bar_plot <- renderPlot({
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(60) , beside=False)
@@ -206,6 +212,24 @@ server <-function(input, output){
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
   })
+  
+  output$wordmap_plot <- renderPlot({
+    myCorpus = Corpus(VectorSource(text))
+    myCorpus = tm_map(myCorpus, content_transformer(tolower))
+    myCorpus = tm_map(myCorpus, removeWords,
+                      c(stopwords("SMART"), "thy", "thou", "thee", "the", "and", "but"))
+    
+    myDTM = TermDocumentMatrix(myCorpus,
+                               control = list(minWordLength = 1))
+    
+    m = as.matrix(myDTM)
+    
+    sort(rowSums(m), decreasing = TRUE)
+    
+    
+    wordcloud(words=text, random.color = TRUE, colors = "RED")
+  })
+  
   
   output$ufotable <- renderDataTable(ourdata)
 }

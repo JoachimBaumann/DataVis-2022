@@ -19,7 +19,8 @@ library(tm)
 library(wordcloud)
 library(memoise)
 library(ggplot2)
-#library(gganimate)
+library(dplyr)
+library(gganimate)
 #Wordcloud packages
 
 
@@ -28,14 +29,6 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 #load words for wordmap 
 #text <- readLines("./words.txt")
-
-
-
-#summary(ourdata)
-#ourdata %>% 
-#  glimpse()
-
-#ourdata$Date...Time
 
 
 #ourdata <- ourdata  %>% 
@@ -63,14 +56,6 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
 #sightings_frequency <- ggplot()
-p <- ggplot(
-  ourdata,
-  aes(Day, Temp, group = Month, color = factor(Month))
-) +
-  geom_line() +
-  scale_color_viridis_d() +
-  labs(x = "Day of Month", y = "Temperature") +
-  theme(legend.position = "top")
 
 
 ####Wordcloud
@@ -100,23 +85,24 @@ getWordCloud <- memoise(function() {
 
 
 ui <- dashboardPage(
+  skin = "green",
   dashboardHeader(title = "UFO Sightings"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Bar-plots", tabName = "bar_plots"),
       menuItem("Map-plots", tabName = "map_plots"),
-      menuItem("Interactive-plots", tabName = "interactive_plots"),
-      menuItem("Data", tabName = "data"), 
-      menuItem("WORDCLOUD", tabName = "wordcloud"),
+      menuItem("Common-Descripters", tabName = "wordcloud"),
+      menuItem("Animated Plots", tabName = "animated_plots"),      
       menuItem("FAQ", tabName = "faq"), 
-      menuItem("Animated Plots", tabName = "animated_plots")
+      menuItem("Data", tabName = "data")
     )
   ),
   dashboardBody(
     tabItems(
       tabItem(
         "bar_plots",
-        box(plotOutput("bar_plot"), width = 8)
+        box(plotOutput("bar_plot"), width = 8),
+        box(plotOutput("bar_shape_plot"))
               ),
       tabItem(
         "map_plots",
@@ -134,7 +120,8 @@ ui <- dashboardPage(
       tabItem(
         "wordcloud",
         h1("Wordcloud"),
-        box(titlePanel("Word Cloud"),
+        box(
+          #titlePanel("Word Cloud"),
              
              sidebarLayout(
                # Sidebar with a slider and selection inputs
@@ -157,36 +144,36 @@ ui <- dashboardPage(
       ),
       tabItem(
         "faq",
-        h1("FAQ"),
+        tags$b("FAQ"),
         p("Here is a list of a FAQ"), 
         
-        h1("How often do people in the US and Canada see UFO’s?"),
-        p("answers"), 
+        tags$b("How often do people in the US and Canada see UFO’s?"),
+        p("placeholder answer"), 
         
-        h1("How do we curate our chosen data, in a way that makes
+        tags$b("How do we curate our chosen data, in a way that makes
            it easier to understand while highlighting useful information?"), 
-        p("answer"), 
+        p("placeholder answer"), 
         
-        h1("What are the most typical seen shapes of UFO’s, and how can it 
+        tags$b("What are the most typical seen shapes of UFO’s, and how can it 
         best be visualized? "),
-        p(""),
+        p("placeholder answer"),
         
-        h1("How do we VIsualize map coordinates in a datavisualization"), 
-        p(""), 
+        tags$b("How do we VIsualize map coordinates in a datavisualization"), 
+        p("placeholder answer"), 
         
-        h1("How many UFO’s spotted in a given state/area?"),
-        p(""),
+        tags$b("How many UFO’s spotted in a given state/area?"),
+        p("placeholder answer"),
         
-        h1("Are there certain keywords which are more common in the sightings summary"),
-        p(""),
+        tags$b("Are there certain keywords which are more common in the sightings summary"),
+        p("placeholder answer"),
         
-        h1("Are there any anomalies in the data set?"), 
-        p(""), 
+        tags$b("Are there any anomalies in the data set?"), 
+        p("placeholder answer"), 
         
-        h1("Which state(s) are there observed the most sightings?"),
-        p(""),
+        tags$b("Which state(s) are there observed the most sightings?"),
+        p("placeholder answer"),
         
-        h1(""),
+        tags$b(""),
         p("")
         
       ),
@@ -205,6 +192,11 @@ server <-function(input, output, session){
   output$bar_plot <- renderPlot({
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(60) , beside=False)
+  })
+  output$bar_shape_plot <- renderPlot({
+    barplot(counts_shape, main="Shape distribution",
+            xlab="Shapes observed", col=colfunc(30) , beside=False)
+    
   })
   output$map_view <- renderLeaflet({
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
@@ -247,4 +239,3 @@ server <-function(input, output, session){
 
 
 shinyApp(ui, server) 
-

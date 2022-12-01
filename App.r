@@ -24,7 +24,7 @@ library(gganimate)
 
 
 
-ourdata <- read.xlsx("./UFOs_coord-2.xlsxt", 1)
+ourdata <- read.xlsx("./UFOs_coord-2.xlsx", 1)
 
 #load words for wordmap 
 #text <- readLines("./words.txt")
@@ -76,6 +76,18 @@ p <- ggplot(
 
 
 
+#Convert dates to dataframe
+# date = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
+#choose correct format for date selectize 
+dates = as.Date(ourdata$Date...Time, format = "%m/%d/%y")
+
+animited_data <- data.frame (
+  date = c(as.Date(ourdata$Date...Time, format = "%m/%d/%Y")),
+  states = c(counts_state)
+)
+
+
+
 ##Animated plot
 animated_plot <- ggplot(
   ourdata$State,
@@ -87,17 +99,6 @@ animated_plot <- ggplot(
 
 
 animated_plot
-
-#Convert dates to dataframe
-# date = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
-#choose correct format for date selectize 
-dates = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
-
-animited_data <- data.frame (
-  date = c(as.Date(ourdata$Date...Time, format = "%m-%d-%Y")),
-  states = c(counts_state)
-)
-
 
 
 

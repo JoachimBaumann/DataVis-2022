@@ -3,23 +3,25 @@
 library(ggplot2)
 library(gganimate)
 library(xlsx)
+library(dplyr)
 
 
-ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
-date_state_set <- read.xlsx(".Date_State.xlsx", 1)
+date_state_set <- read.xlsx("./Date_State.xlsx", 2)
 
+date_state_set <- date_state_set  %>% 
+  filter(State %in% c("CO", "VA", "CA", "WA"))
 
-dates = read.delim("./dates.txt", header = TRUE, sep = " ")
-counts_state <- table(ourdata$State)
+#dates = read.delim("./dates.txt", header = TRUE, sep = " ")
+
 animited_data <- data.frame (
-  date = c(as.Date(unlist(dates), format = "%m-%d-%y")),
-  states = c(counts_state)
+  date = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
+  states = c(date_state_set$State)
 )
 
 ##Animated plot
 animated_plot <- ggplot(
-  ourdata$State,
-  aes(ourdata$Date...Time, counts_state)) +
+  animited_data,
+  aes(date, states, group = states, color = factor(states))) +
   geom_line() +
   scale_color_viridis_d() +
   labs(x = "Day of Month", y = "Frequency") +
@@ -37,5 +39,6 @@ p <- ggplot(
   scale_color_viridis_d() +
   labs(x = "Day of Month", y = "Temperature") +
   theme(legend.position = "top")
+p
 
 

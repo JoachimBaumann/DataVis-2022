@@ -19,12 +19,12 @@ library(tm)
 library(wordcloud)
 library(memoise)
 library(ggplot2)
-#library(gganimate)
+library(gganimate)
 #Wordcloud packages
 
 
 
-ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
+ourdata <- read.xlsx("./UFOs_coord-2.xlsxt", 1)
 
 #load words for wordmap 
 #text <- readLines("./words.txt")
@@ -35,7 +35,7 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 #ourdata %>% 
 #  glimpse()
 
-#ourdata$Date...Time
+
 
 
 #ourdata <- ourdata  %>% 
@@ -59,6 +59,7 @@ barplot_shapes <- barplot(counts_shape, main="Shape distribution",
 
 
 counts_state <- table(ourdata$State)
+counts_date <- table(ourdata$Date...Time)
 barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
@@ -71,6 +72,34 @@ p <- ggplot(
   scale_color_viridis_d() +
   labs(x = "Day of Month", y = "Temperature") +
   theme(legend.position = "top")
+
+
+
+
+##Animated plot
+animated_plot <- ggplot(
+  ourdata$State,
+  aes(ourdata$Date...Time, counts_state)) +
+  geom_line() +
+  scale_color_viridis_d() +
+  labs(x = "Day of Month", y = "Frequency") +
+  theme(legend.position = "top")
+
+
+animated_plot
+
+#Convert dates to dataframe
+# date = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
+#choose correct format for date selectize 
+dates = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
+
+animited_data <- data.frame (
+  date = c(as.Date(ourdata$Date...Time, format = "%m-%d-%Y")),
+  states = c(counts_state)
+)
+
+
+
 
 
 ####Wordcloud

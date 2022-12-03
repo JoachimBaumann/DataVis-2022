@@ -9,7 +9,7 @@ class Entry:
     self.observations = 0
 
   def __str__(self):
-      return self.date + " " + self.state + " " + str(self.observations)
+      return self.date + ", " + self.state + ", " + str(self.observations) + ", "
 
 
 

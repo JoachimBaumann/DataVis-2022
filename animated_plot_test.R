@@ -27,7 +27,6 @@ animated_plot <- ggplot(
   labs(x = "Day of Month", y = "Frequency") +
   theme(legend.position = "top")
 
-
 animated_plot
 
 

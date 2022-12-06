@@ -20,36 +20,17 @@ library(wordcloud)
 library(memoise)
 library(ggplot2)
 library(gganimate)
-#Wordcloud packages
+library(dplyr)
+library(scales)
 
 
 
-ourdata <- read.xlsx("./UFOs_coord-2.xlsx", 1)
-
-#load words for wordmap 
-#text <- readLines("./words.txt")
-
-
-
-#summary(ourdata)
-#ourdata %>% 
-#  glimpse()
-
-
-
-
-#ourdata <- ourdata  %>% 
-#  filter(State == "CA")
-
-#plot(ourdata$lat, ourdata$lng, xlab = "Latitude", ylab = "Longitude")
-
-
-##This is to visualize the different locations on a map. 
+ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 
 theme_set(theme_bw())
 
-mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
+#mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
 colfunc <- colorRampPalette(c("white", "red"))
 
@@ -63,47 +44,49 @@ counts_date <- table(ourdata$Date...Time)
 barplot_shapes <- barplot(counts_state, main="State distribution",
                           xlab="Observations in states", col=colfunc(60) , beside=False)
 
-#sightings_frequency <- ggplot()
-p <- ggplot(
-  ourdata,
-  aes(Day, Temp, group = Month, color = factor(Month))
-) +
-  geom_line() +
-  scale_color_viridis_d() +
-  labs(x = "Day of Month", y = "Temperature") +
-  theme(legend.position = "top")
+#####
+#Date State Observations
+####
+
+date_state_set <- read.xlsx("./Date_State_Observation.xlsx", 1)
 
 
+date_state_set <- date_state_set  %>% 
+  filter(State %in% c(" CO", " VA", " CA", " WA"))
 
 
-#Convert dates to dataframe
-# date = as.Date(ourdata$Date...Time, format = "%m-%d-%y")
-#choose correct format for date selectize 
-dates = as.Date(ourdata$Date...Time, format = "%m/%d/%y")
-
-animited_data <- data.frame (
-  date = c(as.Date(ourdata$Date...Time, format = "%m/%d/%Y")),
-  states = c(counts_state)
+animated_data_full_date <- data.frame (
+  dates = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
+  states = c(date_state_set$State), 
+  observations = c(date_state_set$Observations)
 )
 
+animated_data_month <- data.frame (
+  month = c(date_state_set$Month),
+  states = c(date_state_set$State), 
+  observations = c(date_state_set$Observations)
+)
 
-
-##Animated plot
 animated_plot <- ggplot(
-  ourdata$State,
-  aes(ourdata$Date...Time, counts_state)) +
-  geom_line() +
+  animated_data,
+  aes(dates, observations, group = states, color = factor(states))
+) +
+  geom_line() +  
+  geom_point() +
   scale_color_viridis_d() +
-  labs(x = "Day of Month", y = "Frequency") +
-  theme(legend.position = "top")
+  labs(x = "Date", y = "Observations in state") +
+  theme(legend.position = "top") + 
+  xlim(as.Date(c("1-1-16", "12-12-16"), format="%m-%d-%y"))
+
+#Does not work
+#graph_animation = animated_plot +
+#  transition_time(c(as.Date(date_state_set$Date, format = "%m-%d-%y")))
+#
 
 
-animated_plot
-
-
-
-
-####Wordcloud
+####
+#Wordcloud
+####
 
 getWordCloud <- memoise(function() {
   # Careful not to let just any name slip in here; a
@@ -130,28 +113,29 @@ getWordCloud <- memoise(function() {
 
 
 ui <- dashboardPage(
+  skin = "green",
   dashboardHeader(title = "UFO Sightings"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Bar-plots", tabName = "bar_plots"),
       menuItem("Map-plots", tabName = "map_plots"),
-      menuItem("Interactive-plots", tabName = "interactive_plots"),
-      menuItem("Data", tabName = "data"), 
-      menuItem("WORDCLOUD", tabName = "wordcloud"),
+      menuItem("Common-Descripters", tabName = "wordcloud"),
+      menuItem("Animated Plots", tabName = "animated_plots"),      
       menuItem("FAQ", tabName = "faq"), 
-      menuItem("Animated Plots", tabName = "animated_plots")
+      menuItem("Data", tabName = "data")
     )
   ),
   dashboardBody(
     tabItems(
       tabItem(
         "bar_plots",
-        box(plotOutput("bar_plot"), width = 8)
-              ),
+        box(plotOutput("bar_plot"), width = 8),
+        box(plotOutput("bar_shape_plot"))
+      ),
       tabItem(
         "map_plots",
-              box(leafletOutput("map_view"), width = 8)
-        ),
+        box(leafletOutput("map_view"), width = 8)
+      ),
       tabItem(
         "interactive_plots",
         h1("Interactive Plots")
@@ -164,65 +148,69 @@ ui <- dashboardPage(
       tabItem(
         "wordcloud",
         h1("Wordcloud"),
-        box(titlePanel("Word Cloud"),
-             
-             sidebarLayout(
-               # Sidebar with a slider and selection inputs
-               sidebarPanel(
-                 actionButton("update", "Change"),
-                 hr(),
-                 sliderInput("freq",
-                             "Minimum Frequency:",
-                             min = 1,  max = 500, value = 50),
-                 sliderInput("max",
-                             "Maximum Number of Words:",
-                             min = 1,  max = 1000,  value = 500)
-               ),
-               
-               # Show Word Cloud
-               mainPanel(
-                 plotOutput("plot_map")
-               )
-             ), width = 12, height = 12)
+        box(
+          #titlePanel("Word Cloud"),
+          
+          sidebarLayout(
+            # Sidebar with a slider and selection inputs
+            sidebarPanel(
+              #actionButton("update", "Change"),
+              hr(),
+              sliderInput("freq",
+                          "Minimum Frequency:",
+                          min = 1,  max = 1000, value = 20),
+              sliderInput("max",
+                          "Maximum Number of Words:",
+                          min = 1,  max = 25,  value = 15)
+            ),
+            
+            # Show Word Cloud
+            mainPanel(
+              plotOutput("plot_map")
+            )
+          ), width = 12, height = 12)
       ),
       tabItem(
         "faq",
-        h1("FAQ"),
+        tags$b("FAQ"),
         p("Here is a list of a FAQ"), 
         
-        h1("How often do people in the US and Canada see UFO’s?"),
-        p("answers"), 
+        tags$b("How often do people in the US and Canada see UFO’s?"),
+        p("placeholder answer"), 
         
-        h1("How do we curate our chosen data, in a way that makes
+        tags$b("How do we curate our chosen data, in a way that makes
            it easier to understand while highlighting useful information?"), 
-        p("answer"), 
+        p("placeholder answer"), 
         
-        h1("What are the most typical seen shapes of UFO’s, and how can it 
+        tags$b("What are the most typical seen shapes of UFO’s, and how can it 
         best be visualized? "),
-        p(""),
+        p("placeholder answer"),
         
-        h1("How do we VIsualize map coordinates in a datavisualization"), 
-        p(""), 
+        tags$b("How do we VIsualize map coordinates in a datavisualization"), 
+        p("placeholder answer"), 
         
-        h1("How many UFO’s spotted in a given state/area?"),
-        p(""),
+        tags$b("How many UFO’s spotted in a given state/area?"),
+        p("placeholder answer"),
         
-        h1("Are there certain keywords which are more common in the sightings summary"),
-        p(""),
+        tags$b("Are there certain keywords which are more common in the sightings summary"),
+        p("placeholder answer"),
         
-        h1("Are there any anomalies in the data set?"), 
-        p(""), 
+        tags$b("Are there any anomalies in the data set?"), 
+        p("placeholder answer"), 
         
-        h1("Which state(s) are there observed the most sightings?"),
-        p(""),
+        tags$b("Which state(s) are there observed the most sightings?"),
+        p("placeholder answer"),
         
-        h1(""),
+        tags$b(""),
         p("")
         
       ),
       tabItem(
         "animated_plots",
-        h1("Sighting Frequency")
+        h1("Sighting Frequency"), 
+        box(plotOutput("date_state_observation_plot")),
+        p("Animation"),
+        img(src="animated_plot.gif", align = "left",height='400px',width='600px')
       )
     )
     #box(plotOutput("bar_plot"), width = 8),
@@ -270,6 +258,25 @@ server <-function(input, output, session){
                   colors=brewer.pal(8, "Dark2"))
   })
   
+  #date state observations
+  
+  
+  output$date_state_observation_plot <- renderPlot(ggplot(
+    animated_data_month,
+    aes(month, observations, group = states, color = factor(states))
+  ) +
+    geom_line() +  
+    geom_point() +
+    scale_color_viridis_d() +
+    labs(x = "Month", y = "Observations in state") +
+    theme(legend.position = "top")) #+ 
+    #xlim(as.Date(c("1-1-16", "12-12-16"), format="%m-%d-%y")))
+    #xlim(c(0,13)))
+  
+  
+  
+  
+  #data table 
   
   output$ufotable <- renderDataTable(ourdata)
 }

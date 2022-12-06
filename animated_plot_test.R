@@ -10,6 +10,10 @@ library(scales)
 
 date_state_set <- read.xlsx("./Date_State_Observation.xlsx", 1)
 
+month_state_set <- read.xlsx("./month_state_observation.xlsx", 1)
+
+month_state_set <- month_state_set  %>% 
+  filter(State %in% c("  AZ", "  CA", "  CO", "  WA"))
 
 date_state_set <- date_state_set  %>% 
   filter(State %in% c(" AZ", " CA"))
@@ -23,9 +27,9 @@ animated_data <- data.frame (
 
 
 animated_data_month <- data.frame (
-  month = c(as.integer(date_state_set$Month)),
-  states = c(date_state_set$State), 
-  observations = c(date_state_set$Observations)
+  month = c(as.integer(month_state_set$Month)),
+  states = c(month_state_set$State), 
+  observations = c(month_state_set$Observation)
 )
 
 
@@ -57,12 +61,12 @@ animated_plot_month <- ggplot(
   geom_line() +  
   geom_point() +
   scale_color_viridis_d() +
-  labs(x = "Month", y = "Observations in state") +
+  labs(x = "Month of the Year", y = "Observations in state") +
   theme(legend.position = "top")
 
 animated_plot_month
 
-graph_animation = animated_plot_month + transition_reveal()
+animated_plot_month + transition_reveal(month)
 
 
 

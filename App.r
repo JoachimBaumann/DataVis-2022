@@ -68,7 +68,7 @@ animated_data_month <- data.frame (
 )
 
 animated_plot <- ggplot(
-  animated_data,
+  animated_data_full_date,
   aes(dates, observations, group = states, color = factor(states))
 ) +
   geom_line() +  

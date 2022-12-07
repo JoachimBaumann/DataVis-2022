@@ -224,6 +224,10 @@ server <-function(input, output, session){
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(60) , beside=False)
   })
+  output$bar_shape_plot <- renderPlot({
+    barplot(counts_shape, main="Shape distribution",
+            xlab="Shapes observed", col=colfunc(30) , beside=False)
+  })
   output$map_view <- renderLeaflet({
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     

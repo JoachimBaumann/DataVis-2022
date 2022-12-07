@@ -224,6 +224,9 @@ server <-function(input, output, session){
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(60) , beside=False)
   })
+  
+  
+  
   output$map_view <- renderLeaflet({
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
@@ -269,7 +272,8 @@ server <-function(input, output, session){
     geom_point() +
     scale_color_viridis_d() +
     labs(x = "Month", y = "Observations in state") +
-    theme(legend.position = "top")) #+ 
+    theme(legend.position = "top"))
+    #+ 
     #xlim(as.Date(c("1-1-16", "12-12-16"), format="%m-%d-%y")))
     #xlim(c(0,13)))
   

@@ -53,6 +53,24 @@ animated_plot +
   transition_reveal(along = dates)
 
 
+p <- ggplot(
+  animated_data_month,
+  aes(x=factor(month, level=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)), y=observations, group = states, color = factor(states))
+) +
+  geom_line() +  
+  geom_point() +
+  scale_color_viridis_d() +
+  scale_x_discrete() +
+  labs(x = "Month", y = "Observations in state") +
+  theme(legend.position = "top")
+
+
+
+p
+
+p + transition_reveal(month)
+
+
 ##Animated plot
 animated_plot_month <- ggplot(
   animated_data_month,

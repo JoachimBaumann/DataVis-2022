@@ -62,10 +62,12 @@ animated_data_full_date <- data.frame (
 )
 
 animated_data_month <- data.frame (
-  month = c(date_state_set$Month),
+  month = c(as.integer(date_state_set$Month)),
   states = c(date_state_set$State), 
   observations = c(date_state_set$Observations)
 )
+
+#animated_data_month_sorted <- animated_data_month[order(animated_data_month$month, decreasing=TRUE),]
 
 animated_plot <- ggplot(
   animated_data_full_date,
@@ -266,7 +268,7 @@ ui <- dashboardPage(
         h1("Sighting Frequency"), 
         box(plotOutput("date_state_observation_plot")),
         p("Animation"),
-        img(src="animated_plot.gif", align = "left",height='400px',width='600px')
+        img(src="animated_plot3.gif", align = "left",height='400px',width='600px')
       )
     )
     #box(plotOutput("bar_plot"), width = 8),
@@ -329,11 +331,12 @@ server <-function(input, output, session){
   
   output$date_state_observation_plot <- renderPlot(ggplot(
     animated_data_month,
-    aes(month, observations, group = states, color = factor(states))
+    aes(x=factor(month, level=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)), y=observations, group = states, color = factor(states))
   ) +
     geom_line() +  
     geom_point() +
     scale_color_viridis_d() +
+    scale_x_discrete() +
     labs(x = "Month", y = "Observations in state") +
     theme(legend.position = "top"))
     #+ 

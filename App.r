@@ -280,13 +280,14 @@ ui <- dashboardPage(
 server <-function(input, output, session){
   output$bar_plot <- renderPlot({
     barplot(counts_state, main="State distribution",
-            xlab="Observations in states", col=colfunc(60) , beside=False)
+            xlab="Observations in states", col=colfunc(80) , beside=TRUE, 
+            cex.axis=0.9, cex.names=0.5, las = 2) 
   })
   
   
   output$bar_shape_plot <- renderPlot({
     barplot(counts_shape, main="Shape distribution",
-            xlab="Shapes observed", col=colfunc(30) , beside=False)
+            xlab="Shapes observed", col=colfunc(60) , beside=FALSE, cex.axis=0.9, cex.names=0.4, las = 2)
   })
   
   output$circle_plot <- renderPlot({circle_plot})

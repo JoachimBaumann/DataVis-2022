@@ -172,13 +172,14 @@ ui <- dashboardPage(
       ),
       tabItem(
         "Report",
-        tags$b("Link to Report"),
         
-        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022", "link to report", download=NA, target="_blank"),
+        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022", "Link To Report", download=NA, target="_blank"),
       
-        p("Download Report"),
-        #a(href="http://127.0.0.1:5965/REPLACEWITHREPORT.PDF", "download report here", download = TRUE, target="_blank")
-        downloadButton("downloadData", "Download")
+        p(""),
+        
+        shiny::actionButton(inputId='ab1', label="Download Report", 
+                            icon = icon("th"), 
+                            onclick ="window.open('https://github.com/JoachimBaumann/DataVis-2022/raw/DashboardStructure/pdf.pdf', '_blank')")
         
       ),
       tabItem(
@@ -208,14 +209,6 @@ server <-function(input, output, session){
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
   })
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste("REPLACEWITHREPORT", ".pdf", sep="")
-    },
-    content = function(file) {
-      write.csv(replacewithreport, file)
-    }
-  )
   
   output$date_range <- renderPrint({ 
     

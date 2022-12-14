@@ -121,7 +121,7 @@ ui <- dashboardPage(
       menuItem("Map-plots", tabName = "map_plots"),
       menuItem("Common-Descripters", tabName = "wordcloud"),
       menuItem("Animated Plots", tabName = "animated_plots"),      
-      menuItem("FAQ", tabName = "faq"), 
+      menuItem("Report", tabName = "Report"), 
       menuItem("Data", tabName = "data")
     )
   ),
@@ -171,38 +171,14 @@ ui <- dashboardPage(
           ), width = 12, height = 12)
       ),
       tabItem(
-        "faq",
-        tags$b("FAQ"),
-        p("Here is a list of a FAQ"), 
+        "Report",
+        tags$b("Link to Report"),
         
-        tags$b("How often do people in the US and Canada see UFO’s?"),
-        p("placeholder answer"), 
-        
-        tags$b("How do we curate our chosen data, in a way that makes
-           it easier to understand while highlighting useful information?"), 
-        p("placeholder answer"), 
-        
-        tags$b("What are the most typical seen shapes of UFO’s, and how can it 
-        best be visualized? "),
-        p("placeholder answer"),
-        
-        tags$b("How do we VIsualize map coordinates in a datavisualization"), 
-        p("placeholder answer"), 
-        
-        tags$b("How many UFO’s spotted in a given state/area?"),
-        p("placeholder answer"),
-        
-        tags$b("Are there certain keywords which are more common in the sightings summary"),
-        p("placeholder answer"),
-        
-        tags$b("Are there any anomalies in the data set?"), 
-        p("placeholder answer"), 
-        
-        tags$b("Which state(s) are there observed the most sightings?"),
-        p("placeholder answer"),
-        
-        tags$b(""),
-        p("")
+        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022", "link to report", download=NA, target="_blank"),
+      
+        p("Download Report"),
+        #a(href="http://127.0.0.1:5965/REPLACEWITHREPORT.PDF", "download report here", download = TRUE, target="_blank")
+        downloadButton("downloadData", "Download")
         
       ),
       tabItem(
@@ -232,6 +208,14 @@ server <-function(input, output, session){
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
   })
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("REPLACEWITHREPORT", ".pdf", sep="")
+    },
+    content = function(file) {
+      write.csv(replacewithreport, file)
+    }
+  )
   
   output$date_range <- renderPrint({ 
     

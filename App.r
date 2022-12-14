@@ -134,7 +134,8 @@ ui <- dashboardPage(
       ),
       tabItem(
         "map_plots",
-        box(leafletOutput("map_view"), width = 8)
+        box(leafletOutput("map_view"), width = 8),
+        box(plotOutput('choropleth'), width = 8)
       ),
       tabItem(
         "interactive_plots",
@@ -208,6 +209,18 @@ server <-function(input, output, session){
   output$map_view <- renderLeaflet({
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
+  })
+  output$choropleth <- renderPlot({
+    ggplot() +
+    geom_polygon( data=MergedStates, 
+                           aes(x=long, y=lat, group=group, fill = population), 
+                           color="black", size = 0.2) + 
+      
+      scale_fill_continuous(name="UFO sightings", low = "lightblue", 
+                            high = "darkblue",  
+                            na.value = "red") +
+      
+      labs(title="Observations of UFO's by states")
   })
   
   output$date_range <- renderPrint({ 

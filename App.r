@@ -177,7 +177,7 @@ ui <- dashboardPage(
       menuItem("Map-plots", tabName = "map_plots"),
       menuItem("Common-Descripters", tabName = "wordcloud"),
       menuItem("Animated Plots", tabName = "animated_plots"),      
-      menuItem("FAQ", tabName = "faq"), 
+      menuItem("Report", tabName = "Report"), 
       menuItem("Data", tabName = "data")
     )
   ),
@@ -192,7 +192,8 @@ ui <- dashboardPage(
       ),
       tabItem(
         "map_plots",
-        box(leafletOutput("map_view"), width = 8)
+        box(leafletOutput("map_view"), width = 8),
+        box(plotOutput('choropleth'), width = 8)
       ),
       tabItem(
         "interactive_plots",
@@ -229,38 +230,15 @@ ui <- dashboardPage(
           ), width = 12, height = 12)
       ),
       tabItem(
-        "faq",
-        tags$b("FAQ"),
-        p("Here is a list of a FAQ"), 
+        "Report",
         
-        tags$b("How often do people in the US and Canada see UFO’s?"),
-        p("placeholder answer"), 
+        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022", "Link To Report", download=NA, target="_blank"),
+      
+        p(""),
         
-        tags$b("How do we curate our chosen data, in a way that makes
-           it easier to understand while highlighting useful information?"), 
-        p("placeholder answer"), 
-        
-        tags$b("What are the most typical seen shapes of UFO’s, and how can it 
-        best be visualized? "),
-        p("placeholder answer"),
-        
-        tags$b("How do we VIsualize map coordinates in a datavisualization"), 
-        p("placeholder answer"), 
-        
-        tags$b("How many UFO’s spotted in a given state/area?"),
-        p("placeholder answer"),
-        
-        tags$b("Are there certain keywords which are more common in the sightings summary"),
-        p("placeholder answer"),
-        
-        tags$b("Are there any anomalies in the data set?"), 
-        p("placeholder answer"), 
-        
-        tags$b("Which state(s) are there observed the most sightings?"),
-        p("placeholder answer"),
-        
-        tags$b(""),
-        p("")
+        shiny::actionButton(inputId='ab1', label="Download Report", 
+                            icon = icon("th"), 
+                            onclick ="window.open('https://github.com/JoachimBaumann/DataVis-2022/raw/DashboardStructure/pdf.pdf', '_blank')")
         
       ),
       tabItem(
@@ -296,6 +274,18 @@ server <-function(input, output, session){
   output$map_view <- renderLeaflet({
     mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)@map
     
+  })
+  output$choropleth <- renderPlot({
+    ggplot() +
+    geom_polygon( data=MergedStates, 
+                           aes(x=long, y=lat, group=group, fill = population), 
+                           color="black", size = 0.2) + 
+      
+      scale_fill_continuous(name="UFO sightings", low = "lightblue", 
+                            high = "darkblue",  
+                            na.value = "red") +
+      
+      labs(title="Observations of UFO's by states")
   })
   
   output$date_range <- renderPrint({ 

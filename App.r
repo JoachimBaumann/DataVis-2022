@@ -38,6 +38,13 @@ counts_shape <- table(ourdata$Shape)
 barplot_shapes <- barplot(counts_shape, main="Shape distribution",
                           xlab="Shapes observed", col=colfunc(30) , beside=False)
 
+## data for choroplethmap
+stateObservations <- read.xlsx("./year_state_observations.xlsx", 1)
+MainStates <- map_data("state")
+## Merge the choropleth data
+MergedStates <- inner_join(MainStates, stateObservations, by = "region")
+
+
 
 counts_state <- table(ourdata$State)
 counts_date <- table(ourdata$Date...Time)
@@ -276,6 +283,8 @@ server <-function(input, output, session){
     
   })
   output$choropleth <- renderPlot({
+    
+    
     ggplot() +
     geom_polygon( data=MergedStates, 
                            aes(x=long, y=lat, group=group, fill = population), 

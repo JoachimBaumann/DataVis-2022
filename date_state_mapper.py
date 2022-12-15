@@ -1,5 +1,4 @@
 import openpyxl
-import re
 
 class Entry:
 
@@ -10,9 +9,6 @@ class Entry:
 
   def __str__(self):
       return self.date + ", " + self.state + ", " + str(self.observations) + ", "
-
-
-
 
 class EntryHolder:
 
@@ -32,8 +28,6 @@ class EntryHolder:
 
     def getEntries(self):
         return self.entryList
-
-
 
 
 if __name__ == '__main__':

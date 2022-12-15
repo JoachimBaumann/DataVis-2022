@@ -32,7 +32,7 @@ theme_set(theme_bw())
 
 #mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
-colfunc <- colorRampPalette(c("white", "red"))
+colfunc <- colorRampPalette(c("white", "green"))
 
 counts_shape <- table(ourdata$Shape)
 barplot_shapes <- barplot(counts_shape, main="Shape distribution",
@@ -114,7 +114,7 @@ label_data$angle<-ifelse(angle < -90, angle+180, angle)
 circle_plot <- ggplot(data_circle, aes(x=as.factor(id), y=value)) +       # Note that id is a factor. If x is numeric, there is some space between the first bar
   
   # This add the bars with a blue color
-  geom_bar(stat="identity", fill=alpha("deeppink2", 0.9), colour="black") +
+  geom_bar(stat="identity", fill=alpha("green", 0.9), colour="black") +
   
   # Limits of the plot = very important. The negative value controls the size of the inner circle, the positive one is useful to add size over each bar
   ylim(-120, 700) +

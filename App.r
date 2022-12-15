@@ -194,7 +194,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(
         "bar_plots",
-        box(plotOutput("bar_plot"), width = 16,
+        box(plotOutput("bar_plot"), width = 16),
         box(plotOutput("bar_shape_plot")), 
         box(plotOutput("circle_plot")), 
         

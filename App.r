@@ -140,6 +140,8 @@ circle_plot <- ggplot(data_circle, aes(x=as.factor(id), y=value)) +       # Note
   
   scale_radius() +
   
+  scale_color_gradient(low="white", high="green") + 
+  
   labs(title="Shape Circle Distribution") + 
   
   # Add the labels, using the label_data dataframe that we have created before
@@ -192,7 +194,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(
         "bar_plots",
-        box(plotOutput("bar_plot"), width = 8),
+        box(plotOutput("bar_plot"), width = 16,
         box(plotOutput("bar_shape_plot")), 
         box(plotOutput("circle_plot")), 
         
@@ -266,13 +268,13 @@ server <-function(input, output, session){
   output$bar_plot <- renderPlot({
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(80) , beside=TRUE, 
-            cex.axis=0.9, cex.names=0.5, las = 2) 
+            cex.axis=1.1, cex.names=0.9, las = 2) 
   })
   
   
   output$bar_shape_plot <- renderPlot({
     barplot(counts_shape, main="Shape distribution",
-            xlab="Shapes observed", col=colfunc(60) , beside=FALSE, cex.axis=0.9, cex.names=0.4, las = 2)
+             col=colfunc(60) , beside=FALSE, cex.axis=1.9, cex.names=0.9, las = 2)
   })
   
   output$circle_plot <- renderPlot({circle_plot})

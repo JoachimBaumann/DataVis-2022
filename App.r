@@ -30,7 +30,7 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 theme_set(theme_bw())
 
-#mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
+mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
 colfunc <- colorRampPalette(c("white", "green"))
 
@@ -55,24 +55,26 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
 #Date State Observations
 ####
 
-date_state_set <- read.xlsx("./Date_State_Observation.xlsx", 1)
+date_state_set <- read.xlsx("./month_state_observation.xlsx", 1)
 
 
 date_state_set <- date_state_set  %>% 
-  filter(State %in% c(" CO", " VA", " CA", " WA"))
+  filter(State %in% c("  AZ", "  CA", "  CO", "  WA"))
 
 
-animated_data_full_date <- data.frame (
-  dates = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
-  states = c(date_state_set$State), 
-  observations = c(date_state_set$Observations)
-)
+#animated_data_full_date <- data.frame (
+##  dates = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
+#  states = c(date_state_set$State), 
+#  observations = c(date_state_set$Observations)
+#)
 
 animated_data_month <- data.frame (
   month = c(as.integer(date_state_set$Month)),
   states = c(date_state_set$State), 
-  observations = c(date_state_set$Observations)
+  observations = c(date_state_set$Observation)
 )
+
+
 
 #animated_data_month_sorted <- animated_data_month[order(animated_data_month$month, decreasing=TRUE),]
 

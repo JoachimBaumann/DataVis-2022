@@ -30,7 +30,7 @@ ourdata <- read.xlsx("./UFOs_coord-1.xlsx", 1)
 
 theme_set(theme_bw())
 
-#mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
+mapview(ourdata, xcol = "lng", ycol = "lat", crs = 4269, grid = FALSE)
 
 colfunc <- colorRampPalette(c("white", "green"))
 
@@ -55,24 +55,26 @@ barplot_shapes <- barplot(counts_state, main="State distribution",
 #Date State Observations
 ####
 
-date_state_set <- read.xlsx("./Date_State_Observation.xlsx", 1)
+date_state_set <- read.xlsx("./month_state_observation.xlsx", 1)
 
 
 date_state_set <- date_state_set  %>% 
-  filter(State %in% c(" CO", " VA", " CA", " WA"))
+  filter(State %in% c("  AZ", "  CA", "  CO", "  WA"))
 
 
-animated_data_full_date <- data.frame (
-  dates = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
-  states = c(date_state_set$State), 
-  observations = c(date_state_set$Observations)
-)
+#animated_data_full_date <- data.frame (
+##  dates = c(as.Date(date_state_set$Date, format = "%m-%d-%y")),
+#  states = c(date_state_set$State), 
+#  observations = c(date_state_set$Observations)
+#)
 
 animated_data_month <- data.frame (
   month = c(as.integer(date_state_set$Month)),
   states = c(date_state_set$State), 
-  observations = c(date_state_set$Observations)
+  observations = c(date_state_set$Observation)
 )
+
+
 
 #animated_data_month_sorted <- animated_data_month[order(animated_data_month$month, decreasing=TRUE),]
 
@@ -140,6 +142,8 @@ circle_plot <- ggplot(data_circle, aes(x=as.factor(id), y=value)) +       # Note
   
   scale_radius() +
   
+  scale_color_gradient(low="white", high="green") + 
+  
   labs(title="Shape Circle Distribution") + 
   
   # Add the labels, using the label_data dataframe that we have created before
@@ -192,7 +196,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(
         "bar_plots",
-        box(plotOutput("bar_plot"), width = 8),
+        box(plotOutput("bar_plot"), width = 16),
         box(plotOutput("bar_shape_plot")), 
         box(plotOutput("circle_plot")), 
         
@@ -266,13 +270,13 @@ server <-function(input, output, session){
   output$bar_plot <- renderPlot({
     barplot(counts_state, main="State distribution",
             xlab="Observations in states", col=colfunc(80) , beside=TRUE, 
-            cex.axis=0.9, cex.names=0.5, las = 2) 
+            cex.axis=1.1, cex.names=0.9, las = 2) 
   })
   
   
   output$bar_shape_plot <- renderPlot({
     barplot(counts_shape, main="Shape distribution",
-            xlab="Shapes observed", col=colfunc(60) , beside=FALSE, cex.axis=0.9, cex.names=0.4, las = 2)
+             col=colfunc(60) , beside=FALSE, cex.axis=1.9, cex.names=0.9, las = 2)
   })
   
   output$circle_plot <- renderPlot({circle_plot})

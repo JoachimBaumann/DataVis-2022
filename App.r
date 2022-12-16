@@ -78,16 +78,16 @@ animated_data_month <- data.frame (
 
 #animated_data_month_sorted <- animated_data_month[order(animated_data_month$month, decreasing=TRUE),]
 
-animated_plot <- ggplot(
-  animated_data_full_date,
-  aes(dates, observations, group = states, color = factor(states))
-) +
-  geom_line() +  
-  geom_point() +
-  scale_color_viridis_d() +
-  labs(x = "Date", y = "Observations in state") +
-  theme(legend.position = "top") + 
-  xlim(as.Date(c("1-1-16", "12-12-16"), format="%m-%d-%y"))
+#animated_plot <- ggplot(
+#  animated_data_full_date,
+#  aes(dates, observations, group = states, color = factor(states))
+#) +
+#  geom_line() +  
+#  geom_point() +
+#  scale_color_viridis_d() +
+#  labs(x = "Date", y = "Observations in state") +
+#  theme(legend.position = "top") + 
+#  xlim(as.Date(c("1-1-16", "12-12-16"), format="%m-%d-%y"))
 
 #Does not work
 #graph_animation = animated_plot +

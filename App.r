@@ -3,14 +3,13 @@
 #project, created by group 13
 ###############################
 #Source: https://data.world/aarranzlopez/ufo-sights-2016-us-and-canada
-
-
 library(shiny)
 library(xlsx)
 library(tidyverse)
 library(sf)
-library(mapview)
 library(viridis)
+library(raster)
+library(mapview)
 library(RColorBrewer)
 library(shinydashboard)
 library(leaflet)

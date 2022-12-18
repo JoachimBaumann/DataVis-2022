@@ -3,15 +3,13 @@
 #project, created by group 13
 ###############################
 #Source: https://data.world/aarranzlopez/ufo-sights-2016-us-and-canada
-
-
-
 library(shiny)
 library(xlsx)
 library(tidyverse)
 library(sf)
-library(mapview)
 library(viridis)
+library(raster)
+library(mapview)
 library(RColorBrewer)
 library(shinydashboard)
 library(leaflet)
@@ -243,13 +241,13 @@ ui <- dashboardPage(
       tabItem(
         "Report",
         
-        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022", "Link To Report", download=NA, target="_blank"),
+        tags$a(href="https://github.com/JoachimBaumann/DataVis-2022/blob/main/Data-Visualization%20rapport.pdf", "Link To Report", download=NA, target="_blank"),
       
         p(""),
         
         shiny::actionButton(inputId='ab1', label="Download Report", 
                             icon = icon("th"), 
-                            onclick ="window.open('https://github.com/JoachimBaumann/DataVis-2022/raw/DashboardStructure/pdf.pdf', '_blank')")
+                            onclick ="window.open('https://github.com/JoachimBaumann/DataVis-2022/raw/main/Data-Visualization%20rapport.pdf', '_blank')")
         
       ),
       tabItem(
